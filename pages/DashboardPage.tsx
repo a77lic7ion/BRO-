@@ -2,11 +2,11 @@ import React, { useState, useEffect } from 'react';
 import KpiCard from '../components/dashboard/KpiCard';
 import PerformanceChart from '../components/dashboard/PerformanceChart';
 import RecentActivities from '../components/dashboard/RecentActivities';
+import AiInsights from '../components/dashboard/AiInsights';
 import { kpiData, performanceChartData, recentActivitiesData } from '../constants';
 import { Kpi, ChartDataPoint, ActivityLog } from '../types';
 
 const DashboardPage: React.FC = () => {
-  // Mock data fetching
   const [loading, setLoading] = useState(true);
   const [kpis, setKpis] = useState<Kpi[]>([]);
   const [chartData, setChartData] = useState<ChartDataPoint[]>([]);
@@ -18,12 +18,20 @@ const DashboardPage: React.FC = () => {
       setChartData(performanceChartData);
       setActivities(recentActivitiesData);
       setLoading(false);
-    }, 500); // Simulate network delay
+    }, 400);
     return () => clearTimeout(timer);
   }, []);
 
   if (loading) {
-    return <div className="flex justify-center items-center h-full"><p>Loading dashboard...</p></div>;
+    return (
+      <div className="flex flex-col justify-center items-center h-[60vh] space-y-4 text-center">
+        <div className="w-10 h-10 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
+        <div>
+          <p className="text-foreground font-semibold">ZA-BPO Agent</p>
+          <p className="text-muted-foreground text-sm">Aggregating real-time operations data...</p>
+        </div>
+      </div>
+    );
   }
 
   return (
@@ -33,7 +41,9 @@ const DashboardPage: React.FC = () => {
           <KpiCard key={kpi.id} kpi={kpi} />
         ))}
       </div>
+      
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <AiInsights kpis={kpis} chartData={chartData} />
         <PerformanceChart data={chartData} />
         <RecentActivities activities={activities} />
       </div>
